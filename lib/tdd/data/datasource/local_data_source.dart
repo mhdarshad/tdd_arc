@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:isar/isar.dart';
+import 'package:objectbox/internal.dart' show ModelDefinition, ModelInfo;
 import 'package:objectbox/objectbox.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:drift/drift.dart' as drift;
@@ -19,6 +21,8 @@ class LocalDataSourceImpl implements LocalDataSource {
   final DatabaseType databaseType;
   dynamic _database;
 
+
+
   LocalDataSourceImpl(this.databaseType) {
     _initializeDatabase();
   }
@@ -30,10 +34,10 @@ class LocalDataSourceImpl implements LocalDataSource {
         _database = await Hive.openBox('localStorage');
         break;
       case DatabaseType.Isar:
-        _database = await Isar.open([]);
+        _database = await Isar.open([], directory: '');
         break;
       case DatabaseType.ObjectBox:
-        _database = Store(getObjectBoxModel());
+        // _database = Store(getObjectBoxModel());
         break;
       case DatabaseType.Sqflite:
         _database = await openDatabase('local.db', version: 1,
@@ -42,12 +46,10 @@ class LocalDataSourceImpl implements LocalDataSource {
         });
         break;
       case DatabaseType.Drift:
-        _database = drift.DatabaseConnection.delayed(() async {
-          return drift.NativeDatabase.memory();
-        });
+        // _database = drift.DatabaseConnection.delayed(() async => drift.NativeDatabase.memory());
         break;
       case DatabaseType.Realm:
-        _database = realm.Realm(realm.Configuration([]));
+        // _database = realm.Realm(realm.Configuration([]));
         break;
     }
   }

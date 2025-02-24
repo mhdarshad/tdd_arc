@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:tdd_arc/core/errors/erro_handler.dart';
 import 'package:tdd_arc/core/util/extension/validations.dart';
 import '../model/repository_modle.dart';
 import 'package:equatable/equatable.dart';
