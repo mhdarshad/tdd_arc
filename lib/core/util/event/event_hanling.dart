@@ -1,12 +1,13 @@
 import 'package:tdd_arc/core/util/coustom_ui/notification/error_notifier_controller.dart' show ErrorNotifierMutation, NotificationData, NotificationType;
 import 'package:tdd_arc/core/util/store/store.dart';
+import 'package:tdd_arc/tdd/data/model/modle_entities.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 abstract class EventMutations<T> extends VxMutation<ProjectStore> {
-  final Future<void> Function<D>(
+  final Future<void> Function(
     ProjectStore store,
     Function({String? message, String? type}) onError,
-    Function({required Map<String, dynamic> data, AppState? status}) state,
+    DT Function<DT>({required Model data, AppState? status}) onsucsess,
   ) call;
   AppState state = AppState.initial;
   T? event;
@@ -40,7 +41,10 @@ abstract class EventMutations<T> extends VxMutation<ProjectStore> {
           return onError(message: message, type: type);
         },
         // Success handling callback
-        onSuccess,
+       <D>({required Model data, AppState? status}) {
+          onSuccess(data: data.toJson(), status: state);
+          return data as D;
+       },
       );
     } catch (e, s) {
       // Handle exceptions and show error toast
@@ -52,7 +56,7 @@ abstract class EventMutations<T> extends VxMutation<ProjectStore> {
   void onError({String? message, String? type});
 
   // Method to handle success
-   onSuccess<D>({required D data, AppState? status});
+   onSuccess({required Map<String,dynamic> data, AppState? status});
 
   // Handle exceptions that occur during the mutation process
   @override
@@ -60,6 +64,5 @@ abstract class EventMutations<T> extends VxMutation<ProjectStore> {
     errorToast(e.toString());
   }
 }
-
 // Enum to represent the state of the mutation
 enum AppState { loading, success, initial, error }

@@ -1,13 +1,15 @@
 
-abstract class ModelEntities  {
+import 'package:equatable/equatable.dart';
+
+abstract class Model  extends Equatable{
   bool? status;
   String? msg;
   dynamic data;
   dynamic flags;
 
-  ModelEntities({this.status, this.msg, this.data, this.flags});
+  Model({this.status, this.msg, this.data, this.flags});
 
-  ModelEntities.fromJson(Map<String, dynamic> json) ;
+  Model.fromJson(Map<String, dynamic> json) ;
 
   Map<String, dynamic> toJson();
 

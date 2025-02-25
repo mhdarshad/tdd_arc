@@ -1,6 +1,7 @@
-import 'package:dartz/dartz.dart';
-import 'package:tdd_arc/core/errors/failures.dart';
+import 'package:tdd_arc/core/util/event/event_hanling.dart';
+import 'package:tdd_arc/tdd/data/model/modle_entities.dart';
 import 'package:tdd_arc/tdd/domian/repositories/repository_provider.dart';
+import 'package:tdd_arc/tdd/domian/usecases/usecase_xampl.dart';
 
 abstract class LogicHandler<T,Params> {
   final Set<UseCase<dynamic, Params>> usecases;
@@ -20,15 +21,16 @@ abstract class LogicHandler<T,Params> {
 
 /*
 
-class GetUserController extends LogicHandler<GetUserEvents,dynamic> {
+class GetUserController extends LogicHandler<GetUserEvents,Model> {
   GetUserController(super.usecases);
 
   @override
   call({required dynamic data}) => GetUserEvents(UserDataEvents.logIn, call: (store, onError, onSuccess) async {
         final request = await usecase<UserDataUseCase>()(data: data);
+         
         request.fold(
           (l) => onError(message: l.messege),
-          (r) => onSuccess(data: r, status: AppState.success),
+          (r) => onSuccess(data:store.on<dynamic>(), status: AppState.success),
         );
       });
 }
@@ -37,14 +39,15 @@ class GetUserEvents extends EventMutations<UserDataEvents> {
   GetUserEvents(super.event, {required super.call});
   @override
   onError({String? message, String? type}) {
-    print("Error: $message");
     errorToast(message ?? "Some thing went Wrong");
   }
-
+  
   @override
-  void onSuccess({required Map<String, dynamic> data, AppState? status}) {
-    // TODO: implement onSuccess
+  onSuccess({required Map<String,dynamic> data, AppState? status}) {
+    throw UnimplementedError();
   }
+
+ 
 }
 enum UserDataEvents {
   logIn,
