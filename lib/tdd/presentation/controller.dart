@@ -1,10 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:tdd_arc/core/errors/failures.dart';
-
-// Assuming UseCase looks like this, with a generic signature.
-abstract class UseCase<Type, Params> {
-  Future<Either<Failure, Type>> call({required Params data});
-}
+import 'package:tdd_arc/tdd/domian/repositories/repository_provider.dart';
 
 abstract class LogicHandler<T,Params> {
   final Set<UseCase<dynamic, Params>> usecases;
