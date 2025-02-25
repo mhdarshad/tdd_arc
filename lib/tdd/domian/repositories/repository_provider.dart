@@ -27,7 +27,7 @@ abstract class UseCaseNoReturnNoParams{
 class Params extends Request{
   final Uri uri;
   final Methed methed;
-  final Map<String, String> data;
+  final Map<String, dynamic> data;
   Params({required this.uri,required this.methed,required this.data}):super(methed, uri, data);
   
   @override
