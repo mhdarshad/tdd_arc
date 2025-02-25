@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dartz/dartz.dart';
 import 'package:tdd_arc/core/errors/failures.dart';
 import 'package:tdd_arc/tdd/data/datasource/remote_data_sources.dart';
@@ -27,8 +29,8 @@ abstract class UseCaseNoReturnNoParams{
 class Params extends Request{
   final Uri uri;
   final Methed methed;
-  final Map<String, String> data;
-  Params({required this.uri,required this.methed,required this.data}):super(methed, uri, data);
+  final Map<String, dynamic> data;
+  Params({required this.uri,required this.methed,required this.data}):super(methed, uri, data.map((k,v)=>MapEntry(k,jsonEncode(v))));
   
   @override
   // TODO: implement stringify
