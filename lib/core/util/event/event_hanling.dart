@@ -3,7 +3,7 @@ import 'package:tdd_arc/core/util/store/store.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 abstract class EventMutations<T> extends VxMutation<ProjectStore> {
-  final Future<void> Function(
+  final Future<void> Function<D>(
     ProjectStore store,
     Function({String? message, String? type}) onError,
     Function({required Map<String, dynamic> data, AppState? status}) state,
@@ -52,7 +52,7 @@ abstract class EventMutations<T> extends VxMutation<ProjectStore> {
   void onError({String? message, String? type});
 
   // Method to handle success
-  void onSuccess({required Map<String, dynamic> data, AppState? status});
+   onSuccess<D>({required D data, AppState? status});
 
   // Handle exceptions that occur during the mutation process
   @override
