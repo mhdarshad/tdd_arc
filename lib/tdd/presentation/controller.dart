@@ -1,7 +1,4 @@
-import 'package:tdd_arc/core/util/event/event_hanling.dart';
-import 'package:tdd_arc/tdd/data/model/modle_entities.dart';
 import 'package:tdd_arc/tdd/domian/repositories/repository_provider.dart';
-import 'package:tdd_arc/tdd/domian/usecases/usecase_xampl.dart';
 
 abstract class LogicHandler<T,Params> {
   final Set<UseCase<dynamic, Params>> usecases;

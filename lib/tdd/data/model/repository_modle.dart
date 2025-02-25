@@ -2,6 +2,10 @@
 import 'modle_entities.dart';
 
 class RepositoryModel extends Model{
+  String? status;
+  String? msg;
+  dynamic data;
+  RepositoryModel({this.status, this.msg, this.data});
   @override
   RepositoryModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
@@ -20,5 +24,11 @@ class RepositoryModel extends Model{
   @override
   // TODO: implement props
   List<Object?> get props =>[data];
+  
+  @override
+  fromJson(Map<String, dynamic> json) {
+    // TODO: implement fromJson
+    throw UnimplementedError();
+  }
 
 }
