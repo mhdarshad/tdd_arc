@@ -1,7 +1,7 @@
 import 'package:tdd_arc/tdd/domian/repositories/repository_provider.dart';
 
 abstract class LogicHandler<T,Params> {
-  final Set<UseCase<dynamic, Params>> usecases;
+  final Set<UseCase> usecases;
 
   LogicHandler(this.usecases);
 
