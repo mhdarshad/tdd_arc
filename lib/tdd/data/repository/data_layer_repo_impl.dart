@@ -5,11 +5,11 @@ import 'package:flutter/foundation.dart';
 import 'package:tdd_arc/core/errors/erro_handler.dart';
 import 'package:tdd_arc/core/errors/failures.dart';
 import 'package:tdd_arc/tdd/domian/repositories/repository_provider.dart' show DependencyRepostProvider;
+import 'package:tdd_arc/tdd_arc.dart' show GetRequest;
 import '../../../core/util/network/network_info.dart';
 import '../datasource/remote_data_sources.dart';
 import '../model/repository_modle.dart';
 
-typedef GetRequest = Future<RepositoryModel> Function();
 class DataLayerRepositoryImpl implements DependencyRepostProvider<dynamic>{
   final RemoteDataSource remoteDataSource;
   final NetworkInfo networkInfo;

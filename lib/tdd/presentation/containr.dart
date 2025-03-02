@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart' ;
 import 'package:tdd_arc/core/util/store/store.dart';
+import 'package:tdd_arc/tdd_arc.dart' show VelocityStatus;
 import 'package:velocity_x/velocity_x.dart';
 
-typedef VelocityStatus = VxStatus;
 abstract class BaseContainer extends StatelessWidget {
   const BaseContainer({
     super.key, 

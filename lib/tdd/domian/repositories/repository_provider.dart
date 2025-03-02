@@ -4,7 +4,6 @@ import 'package:dartz/dartz.dart';
 import 'package:tdd_arc/core/errors/failures.dart';
 import 'package:tdd_arc/tdd/data/datasource/remote_data_sources.dart';
 
-typedef EitherOrFailure<T> = Either<Failure, T>;
 
 abstract class DependencyRepostProvider<Entities>{
   Future<Either<Failure,Entities>> getRequest(Request param);
