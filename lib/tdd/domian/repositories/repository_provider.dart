@@ -12,16 +12,10 @@ abstract class UseCase<Return, Params> {
   const UseCase({required this.repo});
   final DependencyRepostProvider repo;
   Future<Either<Failure, Return>> call({required Params data});
-  response<R>(Failure l,R r) => RsponseDartz<Failure,R>(left: l, right: r);
+  response<R>(R r) => Right(r);
 }
 
-class RsponseDartz<L, R> {
-  L left;
-  R right;
-  RsponseDartz({required this.left, required this.right});
-  error(L l) => Left(l);
-  sucsess(R l) => Right(l);
-}
+ 
 
 abstract class UseCaseNoParams<Return> {
   Future<Either<Failure, Return>> call();

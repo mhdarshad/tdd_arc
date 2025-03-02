@@ -3,10 +3,11 @@ import 'package:logger/logger.dart';
 class ServerExceptions implements Exception{
   int code;
   String? messege;
+  Object? error;
 
-  ServerExceptions(this.code,[this.messege]);
+  ServerExceptions(this.code,[this.messege,this.error]);
   erroHandler(){
-    Logger().e("ServerExceptions: $messege");
+    Logger().e("ServerExceptions: $messege",time: DateTime.now(),error: error,stackTrace: StackTrace.current);
     if (code == 404) {
       return messege?? "Not Found";
     } else if (code == 401) {

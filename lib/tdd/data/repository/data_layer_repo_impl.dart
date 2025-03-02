@@ -24,13 +24,7 @@ class DataLayerRepositoryImpl implements DependencyRepostProvider<dynamic>{
         print(remoteTrivia.data);
         return Right(remoteTrivia.data);
       } on ServerExceptions catch(e){
-        if (kDebugMode) {
-          print("server exception ${e.messege}");
-        }
-        // ServerExceptions? exceptions ;
-        if (kDebugMode) {
-          print(e.messege);
-        }
+        e.erroHandler();
         return Left(ServerFailure.fromJson(e.toJson()));
       }
     } else {
