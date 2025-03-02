@@ -16,7 +16,7 @@ class DataLayerRepositoryImpl implements DependencyRepostProvider<dynamic>{
   DataLayerRepositoryImpl({required this.remoteDataSource, required this. networkInfo});
 
   @override
-  Future<Either<Failure, dynamic>> getRequest(dynamic param) =>_getRequest(param.uri,() => remoteDataSource.getRequest(param));
+  Future<Either<Failure, dynamic>> getRequest(dynamic param) =>_getRequest(param.uri.toString(),() => remoteDataSource.getRequest(param));
   Future<Either<Failure, dynamic>> _getRequest(String key,GetRequest getRequest) async{
     if (await networkInfo.isConnected) {
       try {
