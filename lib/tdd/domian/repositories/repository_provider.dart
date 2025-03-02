@@ -4,36 +4,45 @@ import 'package:dartz/dartz.dart';
 import 'package:tdd_arc/core/errors/failures.dart';
 import 'package:tdd_arc/tdd/data/datasource/remote_data_sources.dart';
 
-
-abstract class DependencyRepostProvider<Entities>{
-  Future<Either<Failure,Entities>> getRequest(Request param);
+abstract class DependencyRepostProvider<Entities> {
+  Future<Either<Failure, Entities>> getRequest(Request param);
 }
 
-abstract class UseCase<Return,Params> {
+abstract class UseCase<Return, Params> {
   const UseCase({required this.repo});
   final DependencyRepostProvider repo;
   Future<Either<Failure, Return>> call({required Params data});
-   error(Failure l)=>Left(l);
-   sucsess(l)=>Right(l);
+  response<R>(Failure l,R r) => RsponseDartz<Failure,R>(left: l, right: r);
 }
-abstract class UseCaseNoParams<Return>{
+
+class RsponseDartz<L, R> {
+  L left;
+  R right;
+  RsponseDartz({required this.left, required this.right});
+  error(L l) => Left(l);
+  sucsess(R l) => Right(l);
+}
+
+abstract class UseCaseNoParams<Return> {
   Future<Either<Failure, Return>> call();
 }
-abstract class UseCaseNoReturn<Params>{
+
+abstract class UseCaseNoReturn<Params> {
   Future<Either<Failure, void>> call({required Params data});
 }
-abstract class UseCaseNoReturnNoParams{
+
+abstract class UseCaseNoReturnNoParams {
   Future<Either<Failure, void>> call();
 }
-class Params extends Request{
+
+class Params extends Request {
   final Uri uri;
   final Methed methed;
   final Map<String, dynamic> data;
-  Params({required this.uri,required this.methed,required this.data}):super(methed, uri, data.map((k,v)=>MapEntry(k,jsonEncode(v))));
-  
+  Params({required this.uri, required this.methed, required this.data})
+    : super(methed, uri, data.map((k, v) => MapEntry(k, jsonEncode(v))));
+
   @override
   // TODO: implement stringify
   bool? get stringify => throw UnimplementedError();
-  
-
 }
