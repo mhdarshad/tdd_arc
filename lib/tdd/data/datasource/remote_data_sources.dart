@@ -44,7 +44,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
 
       return _processResponse(response);
     } catch (e) {
-      throw ServerExceptions(500, 'An error occurred while processing your request');
+      throw ServerExceptions(500, 'An error occurred while processing your request',e,);
     }
   }
 
