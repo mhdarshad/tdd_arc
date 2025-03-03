@@ -8,7 +8,6 @@ typedef VelocityStatus = VxStatus;
 typedef GetRequest = Future<RepositoryModel> Function();
 typedef EitherOrFailure<T> = Either<Failure, T>;
  
- export 'package:flutter_localizations/flutter_localizations.dart';
 /// A Calculator.
 class Calculator {
   /// Returns [value] plus 1.
