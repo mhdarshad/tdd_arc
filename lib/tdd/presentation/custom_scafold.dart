@@ -9,14 +9,14 @@ class PScafold extends StatefulWidget {
 
   const PScafold({
     super.key,
-    required this.child,
+    required this.body,
     this.displayLogoHead = false,
     this.appBar,
     this.drawer,
     this.bottomNavigationBar,
   });
 
-  final Widget child;
+  final Widget body;
   final bool displayLogoHead;
   final PreferredSizeWidget? appBar;
   @override
@@ -33,6 +33,6 @@ class _PScafoldState extends State<PScafold> {
         bottomNavigationBar: widget.bottomNavigationBar,
         // backgroundColor: context.theme.backgroundColor,
         body: CustomNotifier(
-            child: CustomNotifier(child: SafeArea(child: widget.child))));
+            child: CustomNotifier(child: SafeArea(child: widget.body))));
   }
 }
