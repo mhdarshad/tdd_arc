@@ -12,8 +12,8 @@ enum Methed { Get, Post, Put, Delete }
 // ignore: must_be_immutable
 abstract class Request extends http.Request implements Equatable {
   Request(Methed method, Uri url, Map<String, String> bodyFields)
-    : super(method.name, url) {
-    super.bodyFields = bodyFields;
+    : super(method.name, url,) {
+    this.bodyFields = bodyFields;
   }
   @override
   List<Object?> get props => [method, url, bodyFields];
