@@ -34,9 +34,8 @@ class Params extends Request {
   final Uri uri;
   final Methed methed;
   final Map<String, dynamic> data;
-  Params({required this.uri, required this.methed, required this.data}) : super(methed.name, uri);
-
-  @override
-  // TODO: implement stringify
-  bool? get stringify => throw UnimplementedError();
+  Params({required this.uri, required this.methed, required this.data}) : super(methed.name, uri){
+    super.bodyFields = map(data);
+  }
 }
+  Map<String, String> map(Map<String, dynamic> data) => data.map((key, value) => MapEntry(key, value.toString()));

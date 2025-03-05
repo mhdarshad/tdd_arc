@@ -1,6 +1,7 @@
 
 
 import 'package:dartz/dartz.dart';
+import 'package:http/http.dart';
 import 'package:tdd_arc/core/errors/erro_handler.dart';
 import 'package:tdd_arc/core/errors/failures.dart';
 import 'package:tdd_arc/tdd/domian/repositories/repository_provider.dart' show DependencyRepostProvider;
@@ -15,7 +16,7 @@ class DataLayerRepositoryImpl implements DependencyRepostProvider<dynamic>{
   DataLayerRepositoryImpl({required this.remoteDataSource, required this. networkInfo});
 
   @override
-  Future<Either<Failure, dynamic>> getRequest(dynamic param) =>_getRequest(param.uri.toString(),() => remoteDataSource.getRequest(param));
+  Future<Either<Failure, dynamic>> getRequest(Request param) =>_getRequest(param.url.toString(),() => remoteDataSource.getRequest(param));
   Future<Either<Failure, dynamic>> _getRequest(String key,GetRequest getRequest) async{
     if (await networkInfo.isConnected) {
       try {
@@ -23,7 +24,6 @@ class DataLayerRepositoryImpl implements DependencyRepostProvider<dynamic>{
         print(remoteTrivia.data);
         return Right(remoteTrivia.data);
       } on ServerExceptions catch(e){
-        e.erroHandler();
         return Left(ServerFailure.fromJson(e.toJson()));
       }
     } else {

@@ -14,18 +14,14 @@ class ApiRequest extends Equatable {
   final String endpoint;
   final Map<String, dynamic>? body;
 
-  ApiRequest({
-    required this.method,
-    required this.endpoint,
-    this.body,
-  });
+  ApiRequest({required this.method, required this.endpoint, this.body});
 
   @override
   List<Object?> get props => [method, endpoint, body];
 }
 
 abstract class RemoteDataSource {
-  Future<RepositoryModel> getRequest(ApiRequest param);
+  Future<RepositoryModel> getRequest(http.Request param);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -36,7 +32,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   RemoteDataSourceImpl({required this.client, required this.baseurl});
 
   @override
-  Future<RepositoryModel> getRequest(ApiRequest param) async {
+  Future<RepositoryModel> getRequest(http.Request param) async {
     final result = await _fetchData(param);
     if (result == null) {
       throw ServerExceptions(500, 'Failed to fetch data');
@@ -44,13 +40,12 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     return result;
   }
 
-  Future<RepositoryModel> _fetchData(ApiRequest param) async {
+  Future<RepositoryModel> _fetchData(http.Request param) async {
     try {
       debugPrint("Starting request...");
 
-      final queryString =
-          param.method == Methed.Get ? _buildQueryString(param.body) : '';
-      final uri = Uri.parse('$baseurl${param.endpoint}$queryString');
+      final queryString = param.method == Methed.Get.name ? _buildQueryString(param.bodyFields) : '';
+      final uri = Uri.parse('$baseurl${param.url}$queryString');
 
       final request = _createRequest(param, uri);
       final response = await _sendRequest(request);
@@ -70,15 +65,16 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     return '?${data.entries.map((e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value.toString())}').join('&')}';
   }
 
-  http.Request _createRequest(ApiRequest param, Uri uri) {
-    final request = http.Request(param.method.name.toUpperCase(), uri);
+  http.Request _createRequest(http.Request param, Uri uri) {
+    final request = http.Request(param.method.toUpperCase(), uri);
     request.headers.addAll(_getRequestHeaders());
 
-    if (param.method == Methed.Post || param.method == Methed.Put) {
-      request.body = json.encode(param.body);
+    if (param.method == Methed.Post.name || param.method == Methed.Put.name) {
+      request.body = json.encode(param.bodyFields);
+          debugPrint("Request body: ${request.body}");
+
     }
-    
-    debugPrint("Request body: ${request.body}");
+
     return request;
   }
 
@@ -96,11 +92,15 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   Future<http.StreamedResponse> _sendRequest(http.Request request) async {
-    debugPrint("Sending ${request.method} request to ${request.url} with body: ${request.body}");
+    debugPrint(
+      "Sending ${request.method} request to ${request.url} with body: ${request.body}",
+    );
     return await client.send(request);
   }
 
-  Future<RepositoryModel> _processResponse(http.StreamedResponse response) async {
+  Future<RepositoryModel> _processResponse(
+    http.StreamedResponse response,
+  ) async {
     final responseBody = await response.stream.bytesToString();
     debugPrint("Response status: ${response.statusCode}, Body: $responseBody");
 
