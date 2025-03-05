@@ -64,6 +64,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     request.headers.addAll(_getRequestHeaders());
 
     if (param.method == Methed.Post || param.method == Methed.Put) {
+      print(json.encode(_mapRequestData(param)));
       request.body = json.encode(_mapRequestData(param));
     }
 
@@ -86,8 +87,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   Map<String, String> _mapRequestData(Request param) {
     return param.bodyFields.map(
           (key, value) => MapEntry(key, value.toString()),
-        ) ??
-        {};
+        );
   }
 
   Future<http.StreamedResponse> _sendRequest(http.Request request) async {
