@@ -91,7 +91,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   Future<http.StreamedResponse> _sendRequest(http.Request request) async {
-    debugPrint("Sending ${request.method} request to ${request.url} params: ${request.body}");
+    debugPrint("Sending ${request.method} request to ${request.url} params: ${request.bodyFields}");
     return await request.send();
   }
 
