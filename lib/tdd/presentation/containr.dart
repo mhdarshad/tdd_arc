@@ -24,9 +24,9 @@ abstract class BaseContainer extends StatelessWidget {
     return VxConsumer<ProjectStore>(
       notifications: Map.fromEntries(
         mutations.map((mutation) {
-          return MapEntry(mutation.runtimeType, (ctx, store, {status}) {
-            onMutation(ctx, store as ProjectStore, mutation, status!); // Dynamic mutation handling
-          });
+          print("Listning mutations ${mutation.runtimeType}");
+          return MapEntry(mutation.runtimeType, (ctx, store, {status}) => onMutation(ctx, store as ProjectStore, mutation, status!); // Dynamic mutation handling
+          );
         }),
       ),
       mutations: mutations, // Use the dynamic mutations set
