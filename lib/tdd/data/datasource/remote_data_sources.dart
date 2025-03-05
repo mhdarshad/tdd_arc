@@ -103,7 +103,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       final errorJson = json.decode(responseBody);
       return errorJson['message'] ?? 'Unknown error occurred';
     } catch (e) {
-      return 'Unknown error occurred';
+      return 'Unknown error occurred : $e';
     }
   }
 }
