@@ -25,7 +25,7 @@ abstract class BaseContainer extends StatelessWidget {
       notifications: Map.fromEntries(
         mutations.map((mutation) {
           print("Listning mutations ${mutation.runtimeType}");
-          return MapEntry(mutation.runtimeType, (ctx, store, {status}) => onMutation(ctx, store as ProjectStore, mutation, status!); // Dynamic mutation handling
+          return MapEntry(mutation.runtimeType, (ctx, store, {status}) => onMutation(ctx, store as ProjectStore, mutation, status!)// Dynamic mutation handling
           );
         }),
       ),
