@@ -1,7 +1,6 @@
 
 
 import 'package:dartz/dartz.dart';
-import 'package:flutter/foundation.dart';
 import 'package:tdd_arc/core/errors/erro_handler.dart';
 import 'package:tdd_arc/core/errors/failures.dart';
 import 'package:tdd_arc/tdd/domian/repositories/repository_provider.dart' show DependencyRepostProvider;

@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:tdd_arc/core/errors/erro_handler.dart';
@@ -9,18 +8,24 @@ import 'package:equatable/equatable.dart';
 
 enum Methed { Get, Post, Put, Delete }
 
-// ignore: must_be_immutable
-abstract class Request extends http.Request implements Equatable {
-  Request(Methed method, Uri url, Map<String, String> bodyFields)
-    : super(method.name, url,) {
-    this.bodyFields = bodyFields;
-  }
+// Define a request model instead of extending `http.Request`
+class ApiRequest extends Equatable {
+  final Methed method;
+  final String endpoint;
+  final Map<String, dynamic>? body;
+
+  ApiRequest({
+    required this.method,
+    required this.endpoint,
+    this.body,
+  });
+
   @override
-  List<Object?> get props => [method, url, bodyFields];
+  List<Object?> get props => [method, endpoint, body];
 }
 
 abstract class RemoteDataSource {
-  Future<RepositoryModel> getRequest(Request param);
+  Future<RepositoryModel> getRequest(ApiRequest param);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -31,7 +36,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   RemoteDataSourceImpl({required this.client, required this.baseurl});
 
   @override
-  Future<RepositoryModel> getRequest(Request param) async {
+  Future<RepositoryModel> getRequest(ApiRequest param) async {
     final result = await _fetchData(param);
     if (result == null) {
       throw ServerExceptions(500, 'Failed to fetch data');
@@ -39,15 +44,15 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     return result;
   }
 
-  Future<RepositoryModel> _fetchData(Request param) async {
+  Future<RepositoryModel> _fetchData(ApiRequest param) async {
     try {
       debugPrint("Starting request...");
 
       final queryString =
-          param.method == Methed.Get ? _buildQueryString(param.bodyFields) : '';
-      final uri = Uri.parse('$baseurl${param.url}$queryString');
+          param.method == Methed.Get ? _buildQueryString(param.body) : '';
+      final uri = Uri.parse('$baseurl${param.endpoint}$queryString');
 
-      final request = _createRequest(param, uri.fixUrl);
+      final request = _createRequest(param, uri);
       final response = await _sendRequest(request);
 
       return _processResponse(response);
@@ -62,17 +67,17 @@ class RemoteDataSourceImpl implements RemoteDataSource {
 
   String _buildQueryString(Map<String, dynamic>? data) {
     if (data == null || data.isEmpty) return '';
-    return '?${data.entries.map((e) => '${e.key}=${e.value}').join('&')}';
+    return '?${data.entries.map((e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value.toString())}').join('&')}';
   }
 
-  http.Request _createRequest(Request param, Uri uri) {
-    final request = http.Request(param.method, uri);
+  http.Request _createRequest(ApiRequest param, Uri uri) {
+    final request = http.Request(param.method.name.toUpperCase(), uri);
     request.headers.addAll(_getRequestHeaders());
 
     if (param.method == Methed.Post || param.method == Methed.Put) {
-      print(json.encode(_mapRequestData(param)));
-      request.body = json.encode(_mapRequestData(param));
+      request.body = json.encode(param.body);
     }
+    
     debugPrint("Request body: ${request.body}");
     return request;
   }
@@ -90,20 +95,12 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     return headers;
   }
 
-  Map<String, String> _mapRequestData(Request param) {
-    return param.bodyFields.map(
-          (key, value) => MapEntry(key, value.toString()),
-        );
-  }
-
   Future<http.StreamedResponse> _sendRequest(http.Request request) async {
-    debugPrint("Sending ${request.method} request to ${request.url} params: ${request.body}");
-    return await request.send();
+    debugPrint("Sending ${request.method} request to ${request.url} with body: ${request.body}");
+    return await client.send(request);
   }
 
-  Future<RepositoryModel> _processResponse(
-    http.StreamedResponse response,
-  ) async {
+  Future<RepositoryModel> _processResponse(http.StreamedResponse response) async {
     final responseBody = await response.stream.bytesToString();
     debugPrint("Response status: ${response.statusCode}, Body: $responseBody");
 
@@ -116,9 +113,8 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   String _extractErrorMessage(String responseBody) {
-    final errorJson = json.decode(responseBody);
-
     try {
+      final errorJson = json.decode(responseBody);
       return errorJson['message'] ?? 'Unknown error occurred';
     } catch (e) {
       return 'Unknown error occurred : $e';
