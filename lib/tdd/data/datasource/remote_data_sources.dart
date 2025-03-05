@@ -31,7 +31,13 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   RemoteDataSourceImpl({required this.client, required this.baseurl});
 
   @override
-  Future<RepositoryModel> getRequest(Request param) => _fetchData(param);
+  Future<RepositoryModel> getRequest(Request param) async {
+    final result = await _fetchData(param);
+    if (result == null) {
+      throw ServerExceptions(500, 'Failed to fetch data');
+    }
+    return result;
+  }
 
   Future<RepositoryModel> _fetchData(Request param) async {
     try {
@@ -67,7 +73,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       print(json.encode(_mapRequestData(param)));
       request.body = json.encode(_mapRequestData(param));
     }
-
+    debugPrint("Request body: ${request.body}");
     return request;
   }
 
@@ -91,7 +97,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   Future<http.StreamedResponse> _sendRequest(http.Request request) async {
-    debugPrint("Sending ${request.method} request to ${request.url} params: ${request.bodyFields}");
+    debugPrint("Sending ${request.method} request to ${request.url} params: ${request.body}");
     return await request.send();
   }
 
