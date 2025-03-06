@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:tdd_arc/core/errors/erro_handler.dart';
 import 'package:tdd_arc/core/util/extension/validations.dart';
+import 'package:tdd_arc/core/util/store/store.dart';
 import '../model/repository_modle.dart';
 import 'package:equatable/equatable.dart';
 
@@ -28,6 +29,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   final http.Client client;
   final String baseurl;
   String? _bearerToken;
+  String? _barterToken;
 
   RemoteDataSourceImpl({required this.client, required this.baseurl});
 
@@ -44,7 +46,10 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     try {
       debugPrint("Starting request...");
 
-      final queryString = param.method == Methed.Get.name ? _buildQueryString(param.bodyFields) : '';
+      final queryString =
+          param.method == Methed.Get.name
+              ? _buildQueryString(param.bodyFields)
+              : '';
       final uri = Uri.parse('$baseurl${param.url}$queryString');
 
       final request = _createRequest(param, uri);
@@ -71,8 +76,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
 
     if (param.method == Methed.Post.name || param.method == Methed.Put.name) {
       request.body = json.encode(param.bodyFields);
-          debugPrint("Request body: ${request.body}");
-
+      debugPrint("Request body: ${request.body}");
     }
 
     return request;
@@ -83,9 +87,13 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     };
-
+    _bearerToken = ProjectStore.stored.token;
     if (_bearerToken != null) {
       headers['Authorization'] = 'Bearer $_bearerToken';
+    }
+
+    if (_barterToken != null) {
+      headers['Barter-Authorization'] = 'Barter $_barterToken';
     }
 
     return headers;
@@ -104,7 +112,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     final responseBody = await response.stream.bytesToString();
     debugPrint("Response status: ${response.statusCode}, Body: $responseBody");
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       return RepositoryModel.fromJson(json.decode(responseBody));
     } else {
       final errorMessage = _extractErrorMessage(responseBody);

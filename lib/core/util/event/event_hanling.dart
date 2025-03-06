@@ -1,4 +1,5 @@
-import 'package:tdd_arc/core/util/coustom_ui/notification/error_notifier_controller.dart' show ErrorNotifierMutation, NotificationData, NotificationType;
+import 'package:tdd_arc/core/util/coustom_ui/notification/error_notifier_controller.dart'
+    show ErrorNotifierMutation, NotificationData, NotificationType;
 import 'package:tdd_arc/core/util/store/store.dart';
 import 'package:tdd_arc/tdd/data/model/modle_entities.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -8,7 +9,8 @@ abstract class EventMutations<T> extends VxMutation<ProjectStore> {
     ProjectStore store,
     Function({String? message, String? type}) onError,
     DT Function<DT>({required Model data, AppState? status}) onsucsess,
-  ) call;
+  )
+  call;
   AppState state = AppState.initial;
   T? event;
 
@@ -16,17 +18,29 @@ abstract class EventMutations<T> extends VxMutation<ProjectStore> {
 
   // Show error toast notification
   void errorToast(String message) {
-    next(() => ErrorNotifierMutation(NotificationData(NotificationType.errortoast, "Error:", message)));
+    next(
+      () => ErrorNotifierMutation(
+        NotificationData(NotificationType.errortoast, "Error:", message),
+      ),
+    );
   }
 
   // Show success toast notification
   void successToast(String message) {
-    next(() => ErrorNotifierMutation(NotificationData(NotificationType.toastSuccses, "Success:", message)));
+    next(
+      () => ErrorNotifierMutation(
+        NotificationData(NotificationType.toastSuccses, "Success:", message),
+      ),
+    );
   }
 
   // Show warning toast notification
   void warningToast(String message) {
-    next(() => ErrorNotifierMutation(NotificationData(NotificationType.toastWarning, "Warning:", message)));
+    next(
+      () => ErrorNotifierMutation(
+        NotificationData(NotificationType.toastWarning, "Warning:", message),
+      ),
+    );
   }
 
   // Perform the mutation call and handle success or error
@@ -41,13 +55,15 @@ abstract class EventMutations<T> extends VxMutation<ProjectStore> {
           return onError(message: message, type: type);
         },
         // Success handling callback
-       <D>({required Model data, AppState? status}) {
-          onSuccess(data: data.toJson(), status: state);
+        <D>({required Model data, AppState? status}) {
+          state == AppState.success;
+          onSuccess(data: data.toJson(), status: state,);
           return data as D;
-       },
+        },
       );
     } catch (e, s) {
       // Handle exceptions and show error toast
+       state = AppState.error;
       onException(e, s);
     }
   }
@@ -56,7 +72,7 @@ abstract class EventMutations<T> extends VxMutation<ProjectStore> {
   void onError({String? message, String? type});
 
   // Method to handle success
-   onSuccess({required Map<String,dynamic> data, AppState? status});
+  onSuccess({required Map<String, dynamic> data, AppState? status});
 
   // Handle exceptions that occur during the mutation process
   @override
@@ -64,5 +80,6 @@ abstract class EventMutations<T> extends VxMutation<ProjectStore> {
     errorToast(e.toString());
   }
 }
+
 // Enum to represent the state of the mutation
 enum AppState { loading, success, initial, error }

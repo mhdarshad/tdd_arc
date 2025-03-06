@@ -3,7 +3,7 @@ import 'package:tdd_arc/core/errors/failures.dart' show Failure;
 import 'package:tdd_arc/tdd/data/model/repository_modle.dart' show RepositoryModel;
 import 'package:velocity_x/velocity_x.dart' show VxState, VxStatus;
 
-typedef StoreInit = VxState;
+typedef VelocityState = VxState;
 typedef VelocityStatus = VxStatus;
 typedef GetRequest = Future<RepositoryModel> Function();
 typedef EitherOrFailure<T> = Either<Failure, T>;

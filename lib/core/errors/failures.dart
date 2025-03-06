@@ -23,7 +23,7 @@ class ServerFailure extends Failure {
       : code = json['code'],
         super(messege: json['messege']) {
     // Log the error when receiving the JSON data
-    Logger().e("Received error response: ${json['messege']}", time: DateTime.now());
+    Logger().e("Received error response: ${json['messege']}: ${json['error']}", time: DateTime.now());
   }
 }
 class DatabaseFailure extends Failure {

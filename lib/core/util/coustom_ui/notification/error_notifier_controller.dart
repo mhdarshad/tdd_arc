@@ -1,25 +1,29 @@
 import 'package:tdd_arc/core/util/store/store.dart' show ProjectStore;
 import 'package:velocity_x/velocity_x.dart';
 
-class ErrorNotifierMutation extends VxMutation<ProjectStore>  {
-  late NotificationData _data,data;
-  ErrorNotifierMutation(this._data);
+class ErrorNotifierMutation extends VxMutation<ProjectStore> {
+  final NotificationData data;
+
+  ErrorNotifierMutation(this.data);
+
   @override
-  perform() async {
-    data = _data;
+  perform() {
+    return store?.errorNotification = data; // ✅ Assign new data to a store property
   }
 }
-enum NotificationType{
+
+enum NotificationType {
   alertDialog,
   toastSuccses,
   toastWarning,
   errortoast,
   bottemSheet
 }
-class NotificationData{
+
+class NotificationData {
   final NotificationType type;
   final String title;
-  final String messege;
+  final String message; // Fixed typo: "messege" → "message"
 
-  NotificationData(this.type, this.title, this.messege);
+  NotificationData(this.type, this.title, this.message);
 }

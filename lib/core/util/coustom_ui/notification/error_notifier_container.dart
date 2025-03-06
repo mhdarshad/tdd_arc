@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tdd_arc/core/util/coustom_ui/ctoast.dart' show CToast;
+import 'package:another_flushbar/flushbar.dart';
+import 'package:tdd_arc/core/util/store/store.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'error_notifier_controller.dart';
 
@@ -11,34 +12,28 @@ class CustomNotifier extends StatelessWidget {
   Widget build(BuildContext context) {
     return VxNotifier(
       mutations: {
-        // Listening to the ErrorNotifierMutation
         ErrorNotifierMutation: (ctx, store, {status}) {
-          final errorMutation = store as ErrorNotifierMutation;
+          final errorMutation = (store.store as ProjectStore).errorNotification;
 
-          switch (errorMutation.data.type) {
+          switch (errorMutation.type) {
             case NotificationType.alertDialog:
-              // Show a dialog when an error occurs
-              _showAlertDialog(ctx, errorMutation.data.messege);
+              _showAlertDialog(ctx, errorMutation.message);
               break;
 
             case NotificationType.toastSuccses:
-              // Display success toast message
-              CToast.toast(ctx, msg: errorMutation.data.messege).success;
+              _showFlushbar(ctx, errorMutation.message, Colors.green, Icons.check_circle);
               break;
 
             case NotificationType.toastWarning:
-              // Display warning toast message
-              CToast.toast(ctx, msg: errorMutation.data.messege).warning;
+              _showFlushbar(ctx, errorMutation.message, Colors.orange, Icons.warning);
               break;
 
             case NotificationType.errortoast:
-              // Display error toast message
-              CToast.toast(ctx, msg: errorMutation.data.messege).error;
+              _showFlushbar(ctx, errorMutation.message, Colors.red, Icons.error);
               break;
 
             case NotificationType.bottemSheet:
-              // Display bottom sheet for additional information or actions
-              _showBottomSheet(ctx, errorMutation.data.messege);
+              _showBottomSheet(ctx, errorMutation.message);
               break;
           }
         }
@@ -47,20 +42,31 @@ class CustomNotifier extends StatelessWidget {
     );
   }
 
-  // Function to show an alert dialog
+  void _showFlushbar(BuildContext context, String message, Color color, IconData icon) {
+    Flushbar(
+      message: message,
+      duration: const Duration(seconds: 3),
+      flushbarPosition: FlushbarPosition.TOP,
+      backgroundColor: color,
+      margin: const EdgeInsets.all(10),
+      borderRadius: BorderRadius.circular(8),
+      icon: Icon(icon, color: Colors.white),
+    ).show(context);
+  }
+
   void _showAlertDialog(BuildContext context, String message) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Notification"),
+          title: const Text("Notification"),
           content: Text(message),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text("OK"),
+              child: const Text("OK"),
             ),
           ],
         );
@@ -68,7 +74,6 @@ class CustomNotifier extends StatelessWidget {
     );
   }
 
-  // Function to show a bottom sheet
   void _showBottomSheet(BuildContext context, String message) {
     showModalBottomSheet(
       context: context,
@@ -78,13 +83,13 @@ class CustomNotifier extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(message, style: TextStyle(fontSize: 18)),
-              SizedBox(height: 10),
+              Text(message, style: const TextStyle(fontSize: 18)),
+              const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text("Close"),
+                child: const Text("Close"),
               ),
             ],
           ),
