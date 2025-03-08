@@ -2,20 +2,19 @@ import 'dart:convert';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:isar/isar.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:tdd_arc/tdd/data/model/repository_modle.dart';
 
 enum DatabaseType { Hive, Isar, ObjectBox, Sqflite, Drift, Realm }
 
 abstract class LocalDataSource {
-  Future<void> saveData(String key, Map<String, dynamic> data);
-  Future<Map<String, dynamic>?> getData(String key);
+  Future<void> saveData(String key, RepositoryModel data);
+  Future<RepositoryModel?> getData(String key);
   Future<void> deleteData(String key);
 }
 
 class LocalDataSourceImpl implements LocalDataSource {
   final DatabaseType databaseType;
   dynamic _database;
-
-
 
   LocalDataSourceImpl(this.databaseType) {
     _initializeDatabase();
@@ -34,10 +33,15 @@ class LocalDataSourceImpl implements LocalDataSource {
         // _database = Store(getObjectBoxModel());
         break;
       case DatabaseType.Sqflite:
-        _database = await openDatabase('local.db', version: 1,
-            onCreate: (db, version) {
-          db.execute('CREATE TABLE storage (key TEXT PRIMARY KEY, value TEXT)');
-        });
+        _database = await openDatabase(
+          'local.db',
+          version: 1,
+          onCreate: (db, version) {
+            db.execute(
+              'CREATE TABLE storage (key TEXT PRIMARY KEY, value TEXT)',
+            );
+          },
+        );
         break;
       case DatabaseType.Drift:
         // _database = drift.DatabaseConnection.delayed(() async => drift.NativeDatabase.memory());
@@ -49,10 +53,13 @@ class LocalDataSourceImpl implements LocalDataSource {
   }
 
   @override
-  Future<void> saveData(String key, Map<String, dynamic> data) async {
+  Future<void> saveData(String key, RepositoryModel data) async {
     switch (databaseType) {
       case DatabaseType.Hive:
-        await _database.put(key, jsonEncode(data));
+        if ((_database as Box<dynamic>).containsKey(key)) {
+          deleteData(key);
+        }
+        await _database.put(key, data.toJson());
         break;
       case DatabaseType.Isar:
         await _database.writeTxn(() async {
@@ -60,44 +67,56 @@ class LocalDataSourceImpl implements LocalDataSource {
         });
         break;
       case DatabaseType.ObjectBox:
-        _database.box<Map<String, dynamic>>().put(data);
+        _database.box<RepositoryModel>().put(data);
         break;
       case DatabaseType.Sqflite:
-        await _database.insert('storage', {'key': key, 'value': jsonEncode(data)},
-            conflictAlgorithm: ConflictAlgorithm.replace);
+        await _database.insert('storage', {
+          'key': key,
+          'value': data.toJson(),
+        }, conflictAlgorithm: ConflictAlgorithm.replace);
         break;
       case DatabaseType.Drift:
-        await _database.into(_database.storage).insertOnConflictUpdate(
-            {'key': key, 'value': jsonEncode(data)});
+        await _database.into(_database.storage).insertOnConflictUpdate({
+          'key': key,
+          'value': data.toJson(),
+        });
         break;
       case DatabaseType.Realm:
         _database.write(() {
-          _database.add(data);
+          _database.add(data.toJson());
         });
         break;
     }
   }
 
   @override
-  Future<Map<String, dynamic>?> getData(String key) async {
+  Future<RepositoryModel?> getData(String key) async {
     switch (databaseType) {
       case DatabaseType.Hive:
-        return jsonDecode(_database.get(key));
+        return RepositoryModel.fromJson((_database as Box<dynamic>).get(key));
       case DatabaseType.Isar:
         return await _database.get(key);
       case DatabaseType.ObjectBox:
-        return _database.box<Map<String, dynamic>>().get(key);
+        return _database.box<RepositoryModel>().get(key);
       case DatabaseType.Sqflite:
-        final result =
-            await _database.query('SELECT value FROM storage WHERE key = ?',
-                [key]);
-        return result.isNotEmpty ? jsonDecode(result.first['value']) : null;
+        final result = await _database.query(
+          'SELECT value FROM storage WHERE key = ?',
+          [key],
+        );
+        return result.isNotEmpty
+            ? RepositoryModel.fromJson(result.first['value'])
+            : null;
       case DatabaseType.Drift:
-        final result = await _database.select(_database.storage)
-            .where((tbl) => tbl.key.equals(key)).get();
-        return result.isNotEmpty ? jsonDecode(result.first.value) : null;
+        final result =
+            await _database
+                .select(_database.storage)
+                .where((tbl) => tbl.key.equals(key))
+                .get();
+        return result.isNotEmpty
+            ? RepositoryModel.fromJson(result.first.value)
+            : null;
       case DatabaseType.Realm:
-        return _database.find(key);
+        return RepositoryModel.fromJson(_database.find(key));
     }
   }
 
@@ -105,7 +124,7 @@ class LocalDataSourceImpl implements LocalDataSource {
   Future<void> deleteData(String key) async {
     switch (databaseType) {
       case DatabaseType.Hive:
-        await _database.delete(key);
+        await (_database as Box<dynamic>).delete(key);
         break;
       case DatabaseType.Isar:
         await _database.writeTxn(() async {
@@ -113,13 +132,14 @@ class LocalDataSourceImpl implements LocalDataSource {
         });
         break;
       case DatabaseType.ObjectBox:
-        _database.box<Map<String, dynamic>>().remove(key);
+        _database.box<RepositoryModel>().remove(key);
         break;
       case DatabaseType.Sqflite:
         await _database.delete('storage', where: 'key = ?', whereArgs: [key]);
         break;
       case DatabaseType.Drift:
-        await (_database.delete(_database.storage)..where((tbl) => tbl.key.equals(key))).go();
+        await (_database.delete(_database.storage)
+          ..where((tbl) => tbl.key.equals(key))).go();
         break;
       case DatabaseType.Realm:
         _database.write(() {
@@ -128,4 +148,6 @@ class LocalDataSourceImpl implements LocalDataSource {
         break;
     }
   }
+
+
 }
