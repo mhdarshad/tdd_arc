@@ -21,25 +21,39 @@ class DataLayerRepositoryImpl implements DependencyRepostProvider<dynamic> {
   });
 
   @override
-  Future<Either<Failure, dynamic>> getRequest(Request param) => _getRequest(
+  Future<Either<Failure, dynamic>> getRequest(
+    Request param, {
+    bool isCached = true,
+  }) => _getRequest(
     param.url.toString(),
+    isCached,
     () => remoteDataSource.getRequest(param),
   );
   Future<Either<Failure, dynamic>> _getRequest(
     String key,
+    bool isCached,
     GetRequest getRequest,
   ) async {
     if (await networkInfo.isConnected) {
       try {
         final RepositoryModel remoteTrivia = await getRequest();
+        if (isCached) {
+          localDataSource.saveData(key, remoteTrivia);
+          print(remoteTrivia.data);
+        }
 
-        localDataSource.saveData(key, remoteTrivia);
-        print(remoteTrivia.data);
         return Right(remoteTrivia.data);
       } on ServerExceptions catch (e) {
         print("ServerExceptions: ${e.toJson()}");
-        final RepositoryModel? localTrivia = await localDataSource.getData(key);
-        return Right(localTrivia?.data ?? {});
+        if (isCached) {
+          final RepositoryModel? localTrivia = await localDataSource.getData(
+            key,
+          );
+          return Right(localTrivia?.data ?? {});
+        } else {
+          e.erroHandler();
+          return Left(ServerFailure.fromJson(e.toJson()));
+        }
       } on LocalDbExceptions catch (e) {
         print("LocalDbExceptions: ${e.toJson()}");
         final RepositoryModel? localTrivia = await localDataSource.getData(key);
@@ -47,8 +61,14 @@ class DataLayerRepositoryImpl implements DependencyRepostProvider<dynamic> {
       }
     } else {
       try {
-        final RepositoryModel? localTrivia = await localDataSource.getData(key);
-        return Right(localTrivia?.data ?? {});
+        if (isCached) {
+          final RepositoryModel? localTrivia = await localDataSource.getData(
+            key,
+          );
+          return Right(localTrivia?.data ?? {});
+        } else {
+          return Right({});
+        }
       } on LocalDbExceptions catch (e) {
         print("LocalDbExceptions: ${e.toJson()}");
         return Left(DatabaseFailure.fromJson(e.toJson()));

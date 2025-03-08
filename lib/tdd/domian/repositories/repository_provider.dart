@@ -6,7 +6,9 @@ import 'package:tdd_arc/core/errors/failures.dart';
 import 'package:tdd_arc/tdd/data/datasource/remote_data_sources.dart';
 
 abstract class DependencyRepostProvider<Entities> {
-  Future<Either<Failure, Entities>> getRequest(Request param);
+  Future<Either<Failure, Entities>> getRequest(Request param,{
+    bool isCached = true,
+  });
 }
 
 abstract class UseCase<Return, Params> {
