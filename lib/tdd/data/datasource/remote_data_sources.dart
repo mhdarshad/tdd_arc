@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:tdd_arc/core/errors/erro_handler.dart';
-import 'package:tdd_arc/core/util/extension/validations.dart';
 import 'package:tdd_arc/core/util/store/store.dart';
 import '../model/repository_modle.dart';
 import 'package:equatable/equatable.dart';
@@ -36,9 +35,6 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   @override
   Future<RepositoryModel> getRequest(http.Request param) async {
     final result = await _fetchData(param);
-    if (result == null) {
-      throw ServerExceptions(500, 'Failed to fetch data');
-    }
     return result;
   }
 
