@@ -14,7 +14,7 @@ class ApiRequest extends Equatable {
   final String endpoint;
   final Map<String, dynamic>? body;
 
-  ApiRequest({required this.method, required this.endpoint, this.body});
+  const ApiRequest({required this.method, required this.endpoint, this.body});
 
   @override
   List<Object?> get props => [method, endpoint, body];
@@ -53,6 +53,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
 
       return _processResponse(response);
     } catch (e) {
+      debugPrint(e.toString());
       throw ServerExceptions(
         500,
         'An error occurred while processing your request',
