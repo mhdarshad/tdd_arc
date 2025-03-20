@@ -54,22 +54,22 @@ class _PScafoldState extends State<PScaffold> {
     );
   }
 }
- typedef BuilderParams = Widget Function<T>(BuildContext context,T currnetPage,);
+ typedef BuilderParams<T> = Widget Function(BuildContext context,T currnetPage,);
 
 class Navigation {
-  static BuilderParams buildWebNav = <T>(context, currentIndex) => SizedBox.shrink();
-  static BuilderParams buildSideNav = <T>(context, currentIndex) => SizedBox.shrink();
-  static BuilderParams buildBottomNav = <T>(context, currentIndex) => SizedBox.shrink();
+  static BuilderParams buildWebNav = <T>(context, T currentIndex) => SizedBox.shrink();
+  static BuilderParams buildSideNav = <T>(context, T currentIndex) => SizedBox.shrink();
+  static BuilderParams buildBottomNav = <T>(context, T currentIndex) => SizedBox.shrink();
 
-  static void webNavBuilder(BuilderParams builder) {
-    buildWebNav = kIsWeb ? builder : <T>(context, currentIndex) => SizedBox.shrink();
+  static void webNavBuilder<T>(BuilderParams<T> builder) {
+    builder  = kIsWeb ? buildWebNav : <T>(context, T currentIndex) => SizedBox.shrink();
   }
 
   static void sideNavBuilder(BuilderParams builder) {
-    buildSideNav = !kIsWeb ? builder : <T>(context, currentIndex) => SizedBox.shrink();
+    builder = !kIsWeb ? buildSideNav : <T>(context,  currentIndex) => SizedBox.shrink();
   }
 
-  static void bottomNavBuilder<T>(BuilderParams builder) {
-    buildBottomNav = !kIsWeb ? builder : <T>(context, currentIndex) => SizedBox.shrink();
+  static void bottomNavBuilder(BuilderParams builder) {
+    builder = !kIsWeb ? buildBottomNav : (context,  currentIndex) => SizedBox.shrink();
   }
 }
