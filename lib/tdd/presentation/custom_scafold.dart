@@ -13,13 +13,13 @@ class PScaffold extends StatefulWidget {
     this.displayLogoHead = false,
     this.appBar,
     this.drawer,
-    this.currentPageindex,
+    this.currentPage,
     this.bottomNavigationBar,
   });
 
   final Widget body;
   final bool displayLogoHead;
-  final int? currentPageindex;
+  final int? currentPage;
   final PreferredSizeWidget? appBar;
   @override
   State<PScaffold> createState() => _PScafoldState();
@@ -34,8 +34,11 @@ class _PScafoldState extends State<PScaffold> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: widget.appBar,
-      drawer: NavigationMixin.buildSideNav(context,0),
-      bottomNavigationBar: NavigationMixin.buildBottomNav(context,0),
+      drawer: NavigationMixin.buildSideNav(context, widget.currentPage),
+      bottomNavigationBar: NavigationMixin.buildBottomNav(
+        context,
+        widget.currentPage,
+      ),
       // backgroundColor: context.theme.backgroundColor,
       body: CustomNotifier(
         child: CustomNotifier(
@@ -45,8 +48,9 @@ class _PScafoldState extends State<PScaffold> {
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                NavigationMixin.buildWebNav(context,0),
-                Expanded(child: widget.body)],
+                NavigationMixin.buildWebNav(context, widget.currentPage),
+                Expanded(child: widget.body),
+              ],
             ),
           ),
         ),
@@ -59,19 +63,31 @@ class _PScafoldState extends State<PScaffold> {
 typedef BuilderParams<T> = Widget Function(BuildContext context, T currentPage);
 
 mixin NavigationMixin {
-  static BuilderParams<dynamic> buildWebNav = (context, currentPage) => SizedBox.shrink();
-  static BuilderParams<dynamic> buildSideNav = (context, currentPage) => SizedBox.shrink();
-  static BuilderParams<dynamic> buildBottomNav = (context, currentPage) => SizedBox.shrink();
+  static BuilderParams<dynamic> buildWebNav =
+      (context, currentPage) => SizedBox.shrink();
+  static BuilderParams<dynamic> buildSideNav =
+      (context, currentPage) => SizedBox.shrink();
+  static BuilderParams<dynamic> buildBottomNav =
+      (context, currentPage) => SizedBox.shrink();
 
   static void webNavBuilder<T>(BuilderParams<T> builder) {
-    buildWebNav = kIsWeb ? (context, currentPage) => builder(context, currentPage as T) : (context, currentPage) => SizedBox.shrink();
+    buildWebNav =
+        kIsWeb
+            ? (context, currentPage) => builder(context, currentPage as T)
+            : (context, currentPage) => SizedBox.shrink();
   }
 
   static void sideNavBuilder<T>(BuilderParams<T> builder) {
-    buildSideNav = !kIsWeb ? (context, currentPage) => builder(context, currentPage as T) : (context, currentPage) => SizedBox.shrink();
+    buildSideNav =
+        !kIsWeb
+            ? (context, currentPage) => builder(context, currentPage as T)
+            : (context, currentPage) => SizedBox.shrink();
   }
 
   static void bottomNavBuilder<T>(BuilderParams<T> builder) {
-    buildBottomNav = !kIsWeb ? (context, currentPage) => builder(context, currentPage as T) : (context, currentPage) => SizedBox.shrink();
+    buildBottomNav =
+        !kIsWeb
+            ? (context, currentPage) => builder(context, currentPage as T)
+            : (context, currentPage) => SizedBox.shrink();
   }
 }
