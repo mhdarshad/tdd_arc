@@ -34,8 +34,8 @@ class _PScafoldState extends State<PScaffold> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: widget.appBar,
-      drawer: Navigation.buildSideNav(context,0),
-      bottomNavigationBar: Navigation.buildBottomNav(context,0),
+      drawer: NavigationMixin.buildSideNav(context,0),
+      bottomNavigationBar: NavigationMixin.buildBottomNav(context,0),
       // backgroundColor: context.theme.backgroundColor,
       body: CustomNotifier(
         child: CustomNotifier(
@@ -45,7 +45,7 @@ class _PScafoldState extends State<PScaffold> {
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Navigation.buildWebNav(context,0),
+                NavigationMixin.buildWebNav(context,0),
                 Expanded(child: widget.body)],
             ),
           ),
