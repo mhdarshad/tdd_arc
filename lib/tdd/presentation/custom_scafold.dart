@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:tdd_arc/core/util/events-notifiers/error_notifier_container.dart';
 
-class PScaffold extends StatefulWidget {
+class PScaffold<T> extends StatefulWidget {
   final Widget? drawer;
 
   final BottomNavigationBar? bottomNavigationBar;
@@ -19,7 +19,7 @@ class PScaffold extends StatefulWidget {
 
   final Widget body;
   final bool displayLogoHead;
-  final int? currentPage;
+  final T? currentPage;
   final PreferredSizeWidget? appBar;
   @override
   State<PScaffold> createState() => _PScafoldState();
