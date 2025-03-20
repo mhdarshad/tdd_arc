@@ -54,14 +54,14 @@ class _PScafoldState extends State<PScaffold> {
     );
   }
 }
- typedef BuilderParams<T> = Widget Function(BuildContext context,T currnetPage,);
+ typedef BuilderParams = Widget Function<T>(BuildContext context,T currnetPage,);
 
 class Navigation {
   static BuilderParams buildWebNav = <T>(context, T currentIndex) => SizedBox.shrink();
   static BuilderParams buildSideNav = <T>(context, T currentIndex) => SizedBox.shrink();
   static BuilderParams buildBottomNav = <T>(context, T currentIndex) => SizedBox.shrink();
 
-  static void webNavBuilder<T>(BuilderParams<T> builder) {
+  static void webNavBuilder<T>(BuilderParams builder) {
     builder  = kIsWeb ? buildWebNav : <T>(context, T currentIndex) => SizedBox.shrink();
   }
 
@@ -70,6 +70,6 @@ class Navigation {
   }
 
   static void bottomNavBuilder(BuilderParams builder) {
-    builder = !kIsWeb ? buildBottomNav : (context,  currentIndex) => SizedBox.shrink();
+    builder = !kIsWeb ? buildBottomNav : <T>(context,  currentIndex) => SizedBox.shrink();
   }
 }
