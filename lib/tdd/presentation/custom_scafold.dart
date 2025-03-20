@@ -13,11 +13,13 @@ class PScaffold extends StatefulWidget {
     this.displayLogoHead = false,
     this.appBar,
     this.drawer,
+    this.currentPageindex,
     this.bottomNavigationBar,
   });
 
   final Widget body;
   final bool displayLogoHead;
+  final int? currentPageindex;
   final PreferredSizeWidget? appBar;
   @override
   State<PScaffold> createState() => _PScafoldState();
@@ -52,22 +54,22 @@ class _PScafoldState extends State<PScaffold> {
     );
   }
 }
- typedef BuilderParams = Widget Function(BuildContext context,int currentIndex,);
+ typedef BuilderParams = Widget Function<T>(BuildContext context,T currnetPage,);
 
 class Navigation {
-  static BuilderParams buildWebNav = (context, currentIndex) => SizedBox.shrink();
-  static BuilderParams buildSideNav = (context, currentIndex) => SizedBox.shrink();
-  static BuilderParams buildBottomNav = (context, currentIndex) => SizedBox.shrink();
+  static BuilderParams buildWebNav = <T>(context, currentIndex) => SizedBox.shrink();
+  static BuilderParams buildSideNav = <T>(context, currentIndex) => SizedBox.shrink();
+  static BuilderParams buildBottomNav = <T>(context, currentIndex) => SizedBox.shrink();
 
   static void webNavBuilder(BuilderParams builder) {
-    buildWebNav = kIsWeb ? builder : (context, currentIndex) => SizedBox.shrink();
+    buildWebNav = kIsWeb ? builder : <T>(context, currentIndex) => SizedBox.shrink();
   }
 
   static void sideNavBuilder(BuilderParams builder) {
-    buildSideNav = !kIsWeb ? builder : (context, currentIndex) => SizedBox.shrink();
+    buildSideNav = !kIsWeb ? builder : <T>(context, currentIndex) => SizedBox.shrink();
   }
 
-  static void bottomNavBuilder(BuilderParams builder) {
-    buildBottomNav = !kIsWeb ? builder : (context, currentIndex) => SizedBox.shrink();
+  static void bottomNavBuilder<T>(BuilderParams builder) {
+    buildBottomNav = !kIsWeb ? builder : <T>(context, currentIndex) => SizedBox.shrink();
   }
 }
