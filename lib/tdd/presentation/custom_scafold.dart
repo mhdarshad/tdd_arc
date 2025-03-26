@@ -41,18 +41,16 @@ class _PScafoldState extends State<PScaffold> {
       ):null,
       // backgroundColor: context.theme.backgroundColor,
       body: CustomNotifier(
-        child: CustomNotifier(
-          child: SafeArea(
-            top: true,
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if( widget.currentPage!=null)
-                NavigationMixin.buildWebNav(context, widget.currentPage),
-                Expanded(child: widget.body),
-              ],
-            ),
+        child: SafeArea(
+          top: true,
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if( widget.currentPage!=null)
+              NavigationMixin.buildWebNav(context, widget.currentPage),
+              Expanded(child: widget.body),
+            ],
           ),
         ),
       ),
