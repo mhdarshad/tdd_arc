@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 class ResponsiveWidget extends StatefulWidget {
@@ -21,29 +22,44 @@ class ResponsiveWidget extends StatefulWidget {
   @override
   State<ResponsiveWidget> createState() => _VisibleWidgetState();
 }
+extension ScreenSizer on num{
+ double get  w => (this*MediaQuery.of(ScreenSize.navigatorKey.currentContext!).size.width)/100;
+ double get  h => (this*MediaQuery.of(ScreenSize.navigatorKey.currentContext!).size.height)/100;
+ double get sp => (this*MediaQuery.of(ScreenSize.navigatorKey.currentContext!).size.aspectRatio)/100;
+}
+class ScreenSize {
+  static double mobilemaxWidget = 600;
+  double tabletmaxWidget = 1024;
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  static bool isWeb =
+      kIsWasm
+          ? MediaQuery.of(navigatorKey.currentContext!).size.width >= mobilemaxWidget
+          : false;
+  static bool isMobile =
+      MediaQuery.of(navigatorKey.currentContext!).size.width < mobilemaxWidget;
+  static bool isTablet =
+      MediaQuery.of(navigatorKey.currentContext!).size.width >= mobilemaxWidget &&
+      MediaQuery.of(navigatorKey.currentContext!).size.width < mobilemaxWidget;
+}
 
 class _VisibleWidgetState extends State<ResponsiveWidget> {
+  double mobilemaxWidget = 600;
+  double tabletmaxWidget = 1024;
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    double mobilemaxWidget = 600;
-    double tabletmaxWidget = 1024;
-    bool isMobile = screenWidth < mobilemaxWidget;
-    bool isTablet =
-        screenWidth >= mobilemaxWidget && screenWidth < mobilemaxWidget;
-    bool isWeb = screenWidth >= mobilemaxWidget;
 
     // Determine visibility
-    if ((isMobile && !widget.isMobile) ||
-        (isTablet && !widget.isTab) ||
-        (isWeb && !widget.isWeb)) {
+    if ((ScreenSize.isMobile && !widget.isMobile) ||
+        (ScreenSize.isTablet && !widget.isTab) ||
+        (ScreenSize.isWeb && !widget.isWeb)) {
       return SizedBox.shrink(); // Hide the widget
     }
 
-    if (isTablet) {
+    if (ScreenSize.isTablet) {
       screenWidth = mobilemaxWidget;
-    } else if (isMobile) {
+    } else if (ScreenSize.isMobile) {
       screenWidth = mobilemaxWidget;
     }
     // Apply max width and height constraints
