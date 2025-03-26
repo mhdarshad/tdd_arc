@@ -40,6 +40,7 @@ class ScreenSize {
   static bool isTablet =
       MediaQuery.of(navigatorKey.currentContext!).size.width >= mobilemaxWidget &&
       MediaQuery.of(navigatorKey.currentContext!).size.width < mobilemaxWidget;
+      static Orientation orientation =  MediaQuery.of(navigatorKey.currentContext!).orientation;
 }
 
 class _VisibleWidgetState extends State<ResponsiveWidget> {
