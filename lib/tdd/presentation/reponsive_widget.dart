@@ -27,6 +27,7 @@ extension ScreenSizer on num{
  double get  h => (this*MediaQuery.of(ScreenSize.navigatorKey.currentContext!).size.height)/100;
  double get sp => (this*MediaQuery.of(ScreenSize.navigatorKey.currentContext!).size.aspectRatio)/100;
 }
+
 class ScreenSize {
   static double mobilemaxWidget = 600;
   double tabletmaxWidget = 1024;

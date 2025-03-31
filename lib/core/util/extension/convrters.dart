@@ -32,6 +32,33 @@ extension StringDateTime on String {
       return ''; // Return an empty string if the DateTime is null
     }
   }
+
+  ///EEE. d, H:mm
+  String get toWeekDateTImeFormat {
+    final localDate = toLocalDateTime;
+    if (localDate != null) {
+      return DateFormat("EEE. d, H:mm").format(localDate);
+    } else {
+      return ''; // Return an empty string if the DateTime is null
+    }
+
+  }
+  String get formatMonthYear {
+    final localDate = toLocalDateTime;
+    if (localDate != null) {
+      return DateFormat("MMMM yyyy").format(localDate);
+    } else {
+      return ''; // Return an empty string if the DateTime is null
+    }
+  }
+  String get formatWeekday {
+    final localDate = toLocalDateTime;
+    if (localDate != null) {
+      return DateFormat("EEEE").format(localDate);
+    } else {
+      return ''; // Return an empty string if the DateTime is null
+    }
+  }
 }
 
 /*

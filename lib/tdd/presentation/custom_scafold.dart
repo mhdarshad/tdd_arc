@@ -68,6 +68,9 @@ mixin NavigationMixin {
       (context, currentPage) => SizedBox.shrink();
   static BuilderParams<dynamic> buildBottomNav =
       (context, currentPage) => SizedBox.shrink();
+// navigations<T>(Function(BuilderParams<T> builder) webNavBuilder,Function(BuilderParams<T> builder) sideNavBuilder,Function(BuilderParams<T> builder) bottomNavBuilder, ){
+// webNavBuilder
+// }
 
   static void webNavBuilder<T>(BuilderParams<T> builder) {
     buildWebNav =
