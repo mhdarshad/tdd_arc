@@ -32,10 +32,7 @@ class ScreenSize {
   static double mobilemaxWidget = 600;
   double tabletmaxWidget = 1024;
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-  static bool isWeb =
-      kIsWasm
-          ? MediaQuery.of(navigatorKey.currentContext!).size.width >= mobilemaxWidget
-          : false;
+  static bool isWeb =true;
   static bool isMobile =
       MediaQuery.of(navigatorKey.currentContext!).size.width < mobilemaxWidget;
   static bool isTablet =

@@ -33,7 +33,7 @@ class _PScafoldState extends State<PScaffold> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: widget.appBar,
-      drawer: !ScreenSize.isWeb&&  widget.drawer!=null? widget.drawer:null,
+      drawer:( !ScreenSize.isWeb&&  widget.drawer!=null)? widget.drawer:null,
       bottomNavigationBar:  ScreenSize.isMobile?widget.bottomNavigationBar:null,
       // backgroundColor: context.theme.backgroundColor,
       body: CustomNotifier(
@@ -43,8 +43,8 @@ class _PScafoldState extends State<PScaffold> {
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if( ScreenSize.isWeb&&  widget.drawer!=null)
-              widget.drawer!,
+              if( ScreenSize.isWeb &&  widget.drawer!=null)
+              widget.drawer??SizedBox.shrink(),
               Expanded(child: widget.body),
             ],
           ),
